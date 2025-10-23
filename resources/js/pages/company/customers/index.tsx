@@ -64,7 +64,7 @@ export default function Dashboard({
         },
         {
             accessorKey: 'is_active',
-            header: () => <TH v={'Is_active'} />,
+            header: () => <TH v={'is_active'} />,
             cell: ({ row }) => {
                 return (
                     <Dialog>
@@ -130,62 +130,62 @@ export default function Dashboard({
                 );
             },
         },
-        {
-            accessorKey: 'delete',
-            header: () => <TH v={''} />,
-            cell: ({ row }) => {
-                return (
-                    <Dialog>
-                        <DialogTrigger className={'bg-transparent'} asChild>
-                            <div className="text-center   flex justify-center" dir={''}>
-                                <Trash2 className={'text-destructive hover:cursor-pointer'} size={16}/>
-                            </div>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                            <Form
-                                {...CustomersController.destroy.form(
-                                    row.original.id,
-                                )}
-                            >
-                                {({ processing }) => (
-                                    <>
-                                        <DialogHeader
-                                            className={
-                                                'flex items-center justify-center'
-                                            }
-                                        >
-                                            <DialogTitle>
-                                                <Cell v={'Publish Task'} />
-                                            </DialogTitle>
-                                            <DialogDescription>
-                                                {__(
-                                                    'Are you sure you want to publish tasks for this task?',
-                                                )}
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="flex items-center space-x-2"></div>
-                                        <DialogFooter className="pt-4 sm:justify-start">
-                                            <Button
-                                                disabled={processing}
-                                                type="submit"
-                                                variant="destructive"
-                                            >
-                                                {__('delete')}
-                                            </Button>
-                                            <DialogClose asChild>
-                                                <Button variant="secondary" >
-                                                    {__('Close')}
-                                                </Button>
-                                            </DialogClose>
-                                        </DialogFooter>
-                                    </>
-                                )}
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
-                );
-            },
-        },
+        // {
+        //     accessorKey: 'delete',
+        //     header: () => <TH v={''} />,
+        //     cell: ({ row }) => {
+        //         return (
+        //             <Dialog>
+        //                 <DialogTrigger className={'bg-transparent'} asChild>
+        //                     <div className="text-center   flex justify-center" dir={''}>
+        //                         <Trash2 className={'text-destructive hover:cursor-pointer'} size={16}/>
+        //                     </div>
+        //                 </DialogTrigger>
+        //                 <DialogContent className="sm:max-w-md">
+        //                     <Form
+        //                         {...CustomersController.destroy.form(
+        //                             row.original.id,
+        //                         )}
+        //                     >
+        //                         {({ processing }) => (
+        //                             <>
+        //                                 <DialogHeader
+        //                                     className={
+        //                                         'flex items-center justify-center'
+        //                                     }
+        //                                 >
+        //                                     <DialogTitle>
+        //                                         <Cell v={'Publish Task'} />
+        //                                     </DialogTitle>
+        //                                     <DialogDescription>
+        //                                         {__(
+        //                                             'Are you sure you want to publish tasks for this task?',
+        //                                         )}
+        //                                     </DialogDescription>
+        //                                 </DialogHeader>
+        //                                 <div className="flex items-center space-x-2"></div>
+        //                                 <DialogFooter className="pt-4 sm:justify-start">
+        //                                     <Button
+        //                                         disabled={processing}
+        //                                         type="submit"
+        //                                         variant="destructive"
+        //                                     >
+        //                                         {__('delete')}
+        //                                     </Button>
+        //                                     <DialogClose asChild>
+        //                                         <Button variant="secondary" >
+        //                                             {__('Close')}
+        //                                         </Button>
+        //                                     </DialogClose>
+        //                                 </DialogFooter>
+        //                             </>
+        //                         )}
+        //                     </Form>
+        //                 </DialogContent>
+        //             </Dialog>
+        //         );
+        //     },
+        // },
     ];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

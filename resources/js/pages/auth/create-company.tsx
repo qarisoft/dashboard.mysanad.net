@@ -1,26 +1,51 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { Download, LoaderCircle } from 'lucide-react';
 
 import CreateCompanyController from '@/actions/App/Http/Controllers/Company/CreateCompanyController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+// import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLang } from '@/hooks/use-lang';
 import AuthLayout from '@/layouts/auth-layout';
+import { useRef, useState } from 'react';
+// import { useDropzone } from 'react-dropzone';
 
 export default function Register() {
     const { __ } = useLang();
+    // const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+    // const files = acceptedFiles.map((file) => (
+    //     <li key={file.path}>
+    //         {file.path} - {file.size} bytes
+    //     </li>
+    // ));
+
+    const [file, setFile] = useState<string | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const handelClick = () => {
+        // event.preventDefault()
+        if (inputRef.current) {
+            inputRef.current.click();
+        }
+    };
+
+    // const  a = usePage()
+    // console.log(a.props.errors);
+    const {t}=useLang()
+
     return (
         <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
+            title={t('Create Company')}
+            description={t('Enter your details below to create your account')}
         >
             <Head title="Register" />
             <Form
                 {...CreateCompanyController.store.form()}
                 // resetOnSuccess={['password', 'password_confirmation']}
+                // onSubmit={(a) => {
+                //     console.log(a);
+                // }}
                 disableWhileProcessing
                 className="flex flex-col gap-6"
             >
@@ -34,7 +59,7 @@ export default function Register() {
                                 <Input
                                     id="company_name"
                                     type="text"
-                                    required
+                                    // required
                                     autoFocus
                                     tabIndex={1}
                                     // autoComplete="name"
@@ -58,9 +83,32 @@ export default function Register() {
                                         />
                                     </a>
                                 </div>
-                                <div className="border rounded flex justifiy-center items-center  h-30">
-                                    <div className="text-gray-500">No thing</div>
+                                <div
+                                    onClick={handelClick}
+                                    className="flex h-30 items-center justify-center rounded border"
+                                >
+                                    <Input
+                                        ref={inputRef}
+                                        onChange={(a) => {
+                                            console.log(a.target.files);
+                                            if (
+                                                a.target.files &&
+                                                a.target.files?.length > 0
+                                            ) {
+                                                setFile(
+                                                    a.target.files![0]?.name,
+                                                );
+                                            }
+                                        }}
+                                        type={'file'}
+                                        className={'hidden'}
+                                        id={'file'}
+                                        name={'file'}
+                                    />
 
+                                    <div className="text-gray-500">
+                                        {file ?? 'No thing'}
+                                    </div>
                                 </div>
                             </div>
 
@@ -69,7 +117,12 @@ export default function Register() {
                                     {__('agree to sanad terms and conditions')}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Checkbox name={'agree'} id={'agree'} />
+                                    <Input
+                                        type={'checkbox'}
+                                        className={'h-4 w-4'}
+                                        name={'agree'}
+                                        id={'agree'}
+                                    />
                                     <Label htmlFor="agree">{__('Agree')}</Label>
                                 </div>
                                 <InputError message={errors.agree} />

@@ -1,3 +1,5 @@
+import { User } from '@/types/index';
+
 export interface Link {
     url: string;
     active: boolean;
@@ -73,6 +75,7 @@ export type TaskObj = {
     updated_at: string | undefined;
 };
 export type Task = {
+    is_done?: boolean;
     id: number;
     code: string;
     notes: string | undefined;
@@ -220,3 +223,25 @@ export type TaskStats = {
     code: string;
 };
 export type LatLng = { lat: number; lng: number };
+export type PriceEvaluation = {
+    task_id: number;
+    id: string;
+    name: string;
+    key: string;
+};
+export type EstateType = {
+    id: string;
+    name: string;
+};
+
+
+
+export type Customer= {
+    id: number;
+    name: string;
+    user_id: number;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    user: User
+};

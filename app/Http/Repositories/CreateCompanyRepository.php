@@ -11,16 +11,18 @@ class CreateCompanyRepository
     private User $user;
 
     private string $company_name;
+    private string $file_name;
 
-    public function __construct(User $user, string $company_name)
+    public function __construct(User $user, string $company_name, string $fileName)
     {
         $this->user = $user;
         $this->company_name = $company_name;
+        $this->file_name = $fileName;
     }
 
-    public static function create(User $user, string $company_name): static
+    public static function create(User $user, string $company_name,string $fileName): static
     {
-        $repo = new CreateCompanyRepository($user, $company_name);
+        $repo = new CreateCompanyRepository($user, $company_name, $fileName);
         $repo->make();
 
         return $repo;
@@ -31,6 +33,7 @@ class CreateCompanyRepository
         $company = Company::create([
             'name' => $this->company_name,
             'user_id' => $this->user->id,
+            'file'=> $this->file_name,
         ]);
 
         $this->user->changeType(UserType::EMPLOYEE);

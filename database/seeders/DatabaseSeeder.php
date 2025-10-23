@@ -28,12 +28,15 @@ class DatabaseSeeder extends Seeder
             EstateTypeSeeder::class,
         ]);
 
+
         User::factory()->admin()->create([
             'email' => 'admin@t.t',
             'username' => 'admin',
         ]);
-        $this->createCompanyWithViewer('company1', 'a');
-        $this->createCompanyWithViewer('company2', 'a2');
+        $this->createCompanyWithViewer('company1', 'viewer1');
+        // $this->createCompanyWithViewer('company2', 'viewer2');
+
+        Company::factory()->count(10)->create();
     }
 
     public function createCompanyWithViewer(string $username, string $vUsername): void
@@ -52,12 +55,12 @@ class DatabaseSeeder extends Seeder
         return Company::factory()
             ->has(Employee::factory(10)->withUser())
             ->has(Customer::factory(10)->withUser())
-            ->has(Viewer::factory(1)->state([
+            ->has(Viewer::factory()->state([
                 'user_id' => User::factory()->viewer()->create([
                     'username' => $viewerUserName,
                 ])->id,
             ]))
-            ->create(['user_id' => $u->id, 'active' => true]);
+            ->create(['user_id' => $u->id, 'is_active' => true]);
     }
 
     public function v1(User $u, Company $c, $vuser): void
@@ -75,15 +78,14 @@ class DatabaseSeeder extends Seeder
                     'customer_id' => $customer->id,
                     'task_status_id' => rand(1, 6),
                     'created_date' => '2025-' . rand(1, 3) . '-' . rand(1, 28),
-//                    'is_published' => true,
-                    //                    'created_at' => Carbon::createFromDate(year: 2025, month: rand(1, 3), day: rand(1, 28))
                 ])
                 ->create();
         });
 
         $c->tasks->each(fn($task) => $task->publish());
 
-        //        $v->visibleTasks()->sync($c->tasks->pluck('id')->toArray());
+        $v->visibleTasks()->sync($c->tasks->pluck('id')->toArray());
+
 
         //        Message::factory(5)
         //            ->create([

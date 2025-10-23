@@ -22,8 +22,13 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Tasks',
-        href: admin.tasks.index(),
+        title: 'Applications',
+        href: admin.applications.index(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Map',
+        href: admin.map.index(),
         icon: LayoutGrid,
     },
 ];

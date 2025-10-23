@@ -36,6 +36,7 @@ class TaskFactory extends Factory
             'must_do_at' => Carbon::now()->add(rand(1, 50), 'hours'),
             'received_at' => date('Y-m-d H:i:s'),
             'district_id' => $district?->id,
+            'order_number'=>fake()->unique()->numberBetween(1, 10000),
             'location_id' => Location::factory()->create()->id,
             'estate_type_id' => rand(1, EstateType::query()->count()),
         ];

@@ -63,7 +63,7 @@ export default function Dashboard({
         },
         {
             accessorKey: 'is_active',
-            header: () => <TH v={'Is_active'} />,
+            header: () => <TH v={'is active'} />,
             cell: ({ row }) => {
                 // const status = row.original.status;
                 // const publish = company.tasks.publish
@@ -134,6 +134,7 @@ export default function Dashboard({
         },
         {
             accessorKey: 'delete',
+
             header: () => <TH v={''} />,
             cell: ({ row }) => {
                 return (

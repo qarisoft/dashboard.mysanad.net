@@ -94,7 +94,6 @@ class ApiTaskController extends Controller
                     $u = $task->uploads()->create([
                         'pricing' => request('pricing'),
                     ]);
-
                     return $u;
                 });
 

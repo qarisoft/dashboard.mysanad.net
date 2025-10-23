@@ -20,6 +20,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
 }
 
 export interface SharedData {

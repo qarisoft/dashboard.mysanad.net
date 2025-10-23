@@ -17,8 +17,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('avatar_url')->nullable();
+            $table->string('logo_url')->nullable();
             $table->foreignId('user_id')->nullable();
-            $table->boolean('active')->default(false);
+            $table->boolean('is_active')->default(false);
+            $table->string('file')->nullable();
+            $table->string('phone');
+            $table->string('address');
             $table->timestamps();
         });
         Schema::create('company_customer', function (Blueprint $table) {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CompaniesController;
+use App\Http\Controllers\Admin\CompaniesCreationRequests;
 use App\Http\Controllers\Admin\Geo\CityController;
 use App\Http\Controllers\Admin\Geo\DistrictController;
 use App\Http\Controllers\Admin\Geo\RegionController;
@@ -14,19 +15,19 @@ Route::middleware(['auth', 'verified'])->name('admin.')->prefix('admin')->group(
     Route::middleware(['isAdmin'])->group(function () {
 
         Route::get(
-            '/',
+            '/dashboard',
             [HomeController::class, 'index']
 
         )->name('dashboard.index');
 
         Route::resource('tasks', TaskController::class);
         Route::resource('companies', CompaniesController::class);
+        Route::resource('applications', CompaniesCreationRequests::class);
 
         Route::resource('regions', RegionController::class);
         Route::resource('cities', CityController::class);
         Route::resource('districts', DistrictController::class);
 
         Route::resource('map', MapController::class);
-
     });
 });

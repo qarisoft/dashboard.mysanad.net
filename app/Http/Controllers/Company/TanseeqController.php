@@ -147,12 +147,22 @@ class TanseeqController extends Controller
      */
     public function show(string $id): Response
     {
-        $task = Task::query()->where('id', $id)->with('city', 'customer', 'location')->first();
+        $task = Task::query()->where('id', $id)->with('city', 'customer', 'location','estate')->first();
         $price_e = $task->pricingEvaluations();
         $uploads = $task->uploads()->get();
 
         return Inertia::render($this->path . '/show', ['task' => $task, 'price' => $price_e, 'uploads' => $uploads]);
         //
+    }
+
+    public function sendBack()
+    {
+
+    }
+
+    public function complete(Task $task)
+    {
+
     }
 
     /**

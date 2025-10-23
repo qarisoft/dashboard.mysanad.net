@@ -17,13 +17,13 @@ class CompaniesController extends Controller
 
     public function index()
     {
-        $tasks = $this->paginate(
+        $companies = $this->paginate(
             Company::query()
                 ->with(['owner'])
                 ->withCount(['tasks', 'publishedTasks', 'employees', 'viewers'])
         );
 
-        return Inertia::render($this->path.'/index', ['companies' => $tasks]);
+        return Inertia::render($this->path . '/index', ['page_data' => $companies]);
     }
 
     /**
@@ -53,7 +53,7 @@ class CompaniesController extends Controller
             ->where('tasks.company_id', $id);
         $q2 = $q2->groupBy('task_status_id')->get();
 
-        return Inertia::render($this->path.'/show', ['tasks_stats' => $q2, 'company' => Company::with('owner')->find($id)]);
+        return Inertia::render($this->path . '/show', ['tasks_stats' => $q2, 'company' => Company::with('owner')->find($id)]);
     }
 
     /**

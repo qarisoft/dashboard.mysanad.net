@@ -22,13 +22,18 @@ return new class extends Migration {
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('code');
+//            $table->primary(['company_id', 'customer_id']);
+            $table->foreignId('company_id');
+            $table->unsignedInteger('task_number');
+            $table->unique(['company_id', 'task_number']);
+            $table->unique(['company_id', 'order_number']);
+            $table->string('code')->nullable();
 
             $table->string('notes')->nullable();
             $table->boolean('is_published')->default(false);
             $table->boolean('is_available')->default(true);
+            $table->boolean('is_done')->default(true);
 
-            $table->foreignIdFor(Company::class)->nullable();
             $table->foreignIdFor(Viewer::class)->nullable();
             $table->foreignIdFor(Customer::class)->nullable();
             $table->foreignIdFor(TaskStatus::class)->default(1);
@@ -42,7 +47,7 @@ return new class extends Migration {
             $table->timestamp('finished_at')->nullable();
             $table->timestamp('published_at')->nullable();
 
-            $table->string('order_number')->nullable();
+            $table->unsignedInteger('order_number');
             $table->string('suk_number')->nullable();
             $table->string('license_number')->nullable();
             $table->string('scheme_number')->nullable();
@@ -56,6 +61,10 @@ return new class extends Migration {
             $table->string('near_north')->nullable();
             $table->string('near_west')->nullable();
             $table->string('near_east')->nullable();
+            $table->string('suck_file')->nullable();
+            $table->string('licence_file')->nullable();
+            $table->json('other_file')->nullable();
+
             $table->string('company_feedback')->nullable();
             $table->json('attach')->nullable();
             $table->string('created_date')->default(now());

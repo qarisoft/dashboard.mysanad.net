@@ -51,6 +51,7 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
     Select,
@@ -67,244 +68,16 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-
-// export const schema = z.object({
-//     id: z.number(),
-//     header: z.string(),
-//     type: z.string(),
-//     status: z.string(),
-//     target: z.string(),
-//     limit: z.string(),
-//     reviewer: z.string(),
-// })
-
-// Create a separate component for the drag handle
-// function DragHandle({ id }: { id: number }) {
-//     const { attributes, listeners } = useSortable({
-//         id,
-//     })
-//
-//     return (
-//         <Button
-//             {...attributes}
-//             {...listeners}
-//             variant="ghost"
-//             size="icon"
-//             className="text-muted-foreground size-7 hover:bg-transparent"
-//         >
-//             <IconGripVertical className="text-muted-foreground size-3" />
-//             <span className="sr-only">Drag to reorder</span>
-//         </Button>
-//     )
-// }
-
-// const columns: ColumnDef<z.infer<typeof schema>>[] = [
-//     {
-//         id: "drag",
-//         header: () => null,
-//         cell: ({ row }) => <DragHandle id={row.original.id} />,
-//     },
-//     {
-//         id: "select",
-//         header: ({ table }) => (
-//             <div className="flex items-center justify-center">
-//                 <Checkbox
-//                     checked={
-//                         table.getIsAllPageRowsSelected() ||
-//                         (table.getIsSomePageRowsSelected() && "indeterminate")
-//                     }
-//                     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-//                     aria-label="Select all"
-//                 />
-//             </div>
-//         ),
-//         cell: ({ row }) => (
-//             <div className="flex items-center justify-center">
-//                 <Checkbox
-//                     checked={row.getIsSelected()}
-//                     onCheckedChange={(value) => row.toggleSelected(!!value)}
-//                     aria-label="Select row"
-//                 />
-//             </div>
-//         ),
-//         enableSorting: false,
-//         enableHiding: false,
-//     },
-//     {
-//         accessorKey: "header",
-//         header: "Header",
-//         cell: ({ row }) => {
-//             return <TableCellViewer item={row.original} />
-//         },
-//         enableHiding: false,
-//     },
-//     {
-//         accessorKey: "type",
-//         header: "Section Type",
-//         cell: ({ row }) => (
-//             <div className="w-32">
-//                 <Badge variant="outline" className="text-muted-foreground px-1.5">
-//                     {row.original.type}
-//                 </Badge>
-//             </div>
-//         ),
-//     },
-//     {
-//         accessorKey: "status",
-//         header: "Status",
-//         cell: ({ row }) => (
-//             <Badge variant="outline" className="text-muted-foreground px-1.5">
-//                 {row.original.status === "Done" ? (
-//                     <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-//                 ) : (
-//                     <IconLoader />
-//                 )}
-//                 {row.original.status}
-//             </Badge>
-//         ),
-//     },
-//     {
-//         accessorKey: "target",
-//         header: () => <div className="w-full text-right">Target</div>,
-//         cell: ({ row }) => (
-//             <form
-//                 onSubmit={(e) => {
-//                     e.preventDefault()
-//                     toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-//                         loading: `Saving ${row.original.header}`,
-//                         success: "Done",
-//                         error: "Error",
-//                     })
-//                 }}
-//             >
-//                 <Label htmlFor={`${row.original.id}-target`} className="sr-only">
-//                     Target
-//                 </Label>
-//                 <Input
-//                     className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-//                     defaultValue={row.original.target}
-//                     id={`${row.original.id}-target`}
-//                 />
-//             </form>
-//         ),
-//     },
-//     {
-//         accessorKey: "limit",
-//         header: () => <div className="w-full text-right">Limit</div>,
-//         cell: ({ row }) => (
-//             <form
-//                 onSubmit={(e) => {
-//                     e.preventDefault()
-//                     toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-//                         loading: `Saving ${row.original.header}`,
-//                         success: "Done",
-//                         error: "Error",
-//                     })
-//                 }}
-//             >
-//                 <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-//                     Limit
-//                 </Label>
-//                 <Input
-//                     className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-//                     defaultValue={row.original.limit}
-//                     id={`${row.original.id}-limit`}
-//                 />
-//             </form>
-//         ),
-//     },
-//     {
-//         accessorKey: "reviewer",
-//         header: "Reviewer",
-//         cell: ({ row }) => {
-//             const isAssigned = row.original.reviewer !== "Assign reviewer"
-//
-//             if (isAssigned) {
-//                 return row.original.reviewer
-//             }
-//
-//             return (
-//                 <>
-//                     <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
-//                         Reviewer
-//                     </Label>
-//                     <Select>
-//                         <SelectTrigger
-//                             className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-//                             size="sm"
-//                             id={`${row.original.id}-reviewer`}
-//                         >
-//                             <SelectValue placeholder="Assign reviewer" />
-//                         </SelectTrigger>
-//                         <SelectContent align="end">
-//                             <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-//                             <SelectItem value="Jamik Tashpulatov">
-//                                 Jamik Tashpulatov
-//                             </SelectItem>
-//                         </SelectContent>
-//                     </Select>
-//                 </>
-//             )
-//         },
-//     },
-//     {
-//         id: "actions",
-//         cell: () => (
-//             <DropdownMenu>
-//                 <DropdownMenuTrigger asChild>
-//                     <Button
-//                         variant="ghost"
-//                         className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-//                         size="icon"
-//                     >
-//                         <IconDotsVertical />
-//                         <span className="sr-only">Open menu</span>
-//                     </Button>
-//                 </DropdownMenuTrigger>
-//                 <DropdownMenuContent align="end" className="w-32">
-//                     <DropdownMenuItem>Edit</DropdownMenuItem>
-//                     <DropdownMenuItem>Make a copy</DropdownMenuItem>
-//                     <DropdownMenuItem>Favorite</DropdownMenuItem>
-//                     <DropdownMenuSeparator />
-//                     <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-//                 </DropdownMenuContent>
-//             </DropdownMenu>
-//         ),
-//     },
-// ]
-
-// function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
-//     const { transform, transition, setNodeRef, isDragging } = useSortable({
-//         id: row.original.id,
-//     })
-//
-//     return (
-//         <TableRow
-//             data-state={row.getIsSelected() && "selected"}
-//             data-dragging={isDragging}
-//             ref={setNodeRef}
-//             className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
-//             style={{
-//                 transform: CSS.Transform.toString(transform),
-//                 transition: transition,
-//             }}
-//         >
-//             {row.getVisibleCells().map((cell) => (
-//                 <TableCell key={cell.id}>
-//                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-//                 </TableCell>
-//             ))}
-//         </TableRow>
-//     )
-// }
+import { useLang } from '@/hooks/use-lang';
 
 export function DataTable<T extends { id: number }>({
     data,
     columns,
+    onCreate,
 }: {
     data: T[];
     columns: ColumnDef<T>[];
+    onCreate?: () => void;
 }) {
     // const [data, setData] = React.useState(() => initialData);
     const [rowSelection, setRowSelection] = React.useState({});
@@ -342,14 +115,14 @@ export function DataTable<T extends { id: number }>({
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     });
-
+    const { __ } = useLang();
     return (
         <div
             // defaultValue="outline"
-            className="w-full flex flex-col justify-start gap-6 h-full  "
+            className="flex h-full w-full flex-col justify-start gap-6"
         >
-            <div className="flex items-center justify-between px-4 lg:px-6 pt-6 bg-amber-00">
-                <div className="flex-1 pe-5 flex">
+            <div className="bg-amber-00 flex items-center justify-between px-4 pt-6 lg:px-6">
+                <div className="flex flex-1 pe-5">
                     <div className="flex-1">
                         <Input className={'w-'} placeholder={'Search...'} />
                     </div>
@@ -374,7 +147,7 @@ export function DataTable<T extends { id: number }>({
                                 .filter(
                                     (column) =>
                                         typeof column.accessorFn !==
-                                            'undefined' && column.getCanHide(),
+                                        'undefined' && column.getCanHide(),
                                 )
                                 .map((column) => {
                                     return (
@@ -392,15 +165,19 @@ export function DataTable<T extends { id: number }>({
                                 })}
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    <Button variant="outline" size="sm">
-                        <IconPlus />
-                        <span className="hidden lg:inline">Add Section</span>
-                    </Button>
+                    {onCreate && (
+                        <Button variant="outline" size="sm" onClick={onCreate} >
+                            <IconPlus />
+                            <span className="hidden lg:inline">
+                                {__('Create')}
+                            </span>
+                        </Button>
+                    )}
                 </div>
             </div>
 
-            <div className="relative flex flex-col gap-4 overflow-auto px-4 bg-red-00 lg:px-6  flex-1 ">
-                <div className="overflow-hidde rounded-lg border flex-1  overflow-auto">
+            <div className="bg-red-00 relative flex flex-1 flex-col gap-4 overflow-auto px-4 lg:px-6">
+                <div className="overflow-hidde flex-1 overflow-auto rounded-lg border">
                     <Table>
                         <TableHeader className="sticky top-0 z-10 bg-muted">
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -415,17 +192,17 @@ export function DataTable<T extends { id: number }>({
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
-                                                          header.getContext(),
-                                                      )}
+                                                        header.column
+                                                            .columnDef.header,
+                                                        header.getContext(),
+                                                    )}
                                             </TableHead>
                                         );
                                     })}
                                 </TableRow>
                             ))}
                         </TableHeader>
-                        <TableBody className="**:data-[slot=table-cell]:first:w-8 overflow-auto">
+                        <TableBody className="overflow-auto **:data-[slot=table-cell]:first:w-8">
                             {table.getRowModel().rows?.length ? (
                                 <>
                                     {table.getRowModel().rows.map((row) => (
@@ -466,9 +243,8 @@ export function DataTable<T extends { id: number }>({
                         </TableBody>
                     </Table>
                 </div>
-                <div className="flex items-center justify-between px-4 py- bg-red-00 pb-2">
-
-                    <div className="flex w-full flex- items-center gap-8 lg:w-fit">
+                <div className="py- bg-red-00 flex items-center justify-between px-4 pb-2">
+                    <div className="flex- flex w-full items-center gap-8 lg:w-fit">
                         <div className="hidden items-center gap-2 lg:flex">
                             <Label
                                 htmlFor="rows-per-page"
@@ -494,14 +270,16 @@ export function DataTable<T extends { id: number }>({
                                     />
                                 </SelectTrigger>
                                 <SelectContent side="top">
-                                    {[10,15, 20, 30, 40, 50].map((pageSize) => (
-                                        <SelectItem
-                                            key={pageSize}
-                                            value={`${pageSize}`}
-                                        >
-                                            {pageSize}
-                                        </SelectItem>
-                                    ))}
+                                    {[10, 15, 20, 30, 40, 50].map(
+                                        (pageSize) => (
+                                            <SelectItem
+                                                key={pageSize}
+                                                value={`${pageSize}`}
+                                            >
+                                                {pageSize}
+                                            </SelectItem>
+                                        ),
+                                    )}
                                 </SelectContent>
                             </Select>
                         </div>
@@ -558,7 +336,7 @@ export function DataTable<T extends { id: number }>({
                         </div>
                     </div>
 
-                    <div className="hidden flex- text-sm text-muted-foreground lg:flex">
+                    <div className="flex- hidden text-sm text-muted-foreground lg:flex">
                         {table.getFilteredSelectedRowModel().rows.length} of{' '}
                         {table.getFilteredRowModel().rows.length} row(s)
                         selected.
@@ -568,3 +346,6 @@ export function DataTable<T extends { id: number }>({
         </div>
     );
 }
+
+
+

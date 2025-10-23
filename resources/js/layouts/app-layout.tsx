@@ -3,9 +3,22 @@ import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
 import company from '@/routes/company';
 import { edit } from '@/routes/profile';
 import { type BreadcrumbItem, type NavItem } from '@/types';
-import { LayoutGrid, SettingsIcon } from 'lucide-react';
+// import { Home, LayoutGrid, LogOutIcon, SettingsIcon,MapPinIcon,BadgeInfoIcon } from 'lucide-react';
 import { type ReactNode } from 'react';
+import { logout } from '@/routes';
+import {
+    ChevronDoubleDownIcon,
+    ChevronDoubleUpIcon,
+    Cog6ToothIcon,
+    HomeIcon,
+    MapPinIcon,
+    Squares2X2Icon,
+    SquaresPlusIcon,
+    UserGroupIcon,
+    UsersIcon,
 
+} from '@heroicons/react/24/solid';
+import { LogOutIcon, SettingsIcon } from 'lucide-react';
 interface AppLayoutProps {
     children: ReactNode;
     breadcrumbs?: BreadcrumbItem[];
@@ -14,22 +27,22 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: company.dashboard.index().url,
-        icon: LayoutGrid,
+        icon: HomeIcon,
     },
     {
         title: 'Tasks',
         href: company.tasks.index().url,
-        icon: LayoutGrid,
+        icon: Squares2X2Icon,
     },
     {
         title: 'Tanseeq',
         href: company.tanseeq.index().url,
-        icon: LayoutGrid,
+        icon: SquaresPlusIcon,
     },
     {
         title: 'Map',
         href: company.map.index().url,
-        icon: LayoutGrid,
+        icon: MapPinIcon,
     },
 ];
 const usersGroup = {
@@ -38,17 +51,17 @@ const usersGroup = {
         {
             title: 'Customers',
             href: company.customers.index().url,
-            icon: LayoutGrid,
+            icon: UserGroupIcon,
         },
         {
             title: 'Employees',
             href: company.users.index().url,
-            icon: LayoutGrid,
+            icon: UsersIcon,
         },
         {
             title: 'Viewers',
             href: company.viewers.index().url,
-            icon: LayoutGrid,
+            icon: UsersIcon,
         },
     ],
 };
@@ -61,6 +74,13 @@ const footerNavItems: NavItem[] = [
         title: 'Settings',
         href: edit().url,
         icon: SettingsIcon,
+    },
+    {
+        title: 'Log out',
+        href: logout().url,
+        icon: LogOutIcon,
+        method: 'post',
+
     },
 ];
 export default ({ children, breadcrumbs, ...props }: AppLayoutProps) => (

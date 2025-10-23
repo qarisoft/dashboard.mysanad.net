@@ -7,8 +7,8 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
-import { type ComponentPropsWithoutRef } from 'react';
 import { Link } from '@inertiajs/react';
+import { type ComponentPropsWithoutRef } from 'react';
 
 export function NavFooter({
     items,
@@ -38,6 +38,8 @@ export function NavFooter({
                                     }
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    // method={'po'}
+                                    method={item.method ?? 'get'}
                                 >
                                     {item.icon && (
                                         <Icon

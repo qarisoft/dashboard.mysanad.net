@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('create-company', [CreateCompanyController::class,'create'])->name('company.create');
-Route::post('create-company', [CreateCompanyController::class,'store'])->name('company.store');
-
+    Route::post('create-company', [CreateCompanyController::class,'store'])->name('company.store');
+    Route::get('company/waiting-approval', [CreateCompanyController::class,'waitingApproval'])->name('company.waiting-approval');
     Route::middleware([CanAccessCompany::class])->name('company.')->group(function () {
 
         Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard.index');
@@ -33,6 +33,9 @@ Route::post('create-company', [CreateCompanyController::class,'store'])->name('c
         Route::resource('prefrencess', PrefrencessController::class);
 
         Route::resource('tanseeq', TanseeqController::class);
+        Route::post('tanseeq/{task}/send-back', [TanseeqController::class,'sendBack'])->name('tanseeq.sendBack');
+        Route::post('tanseeq/{task}/complete', [TanseeqController::class,'complete'])->name('tanseeq.complete');
+
         Route::post('tasks/{task}/publish', [TasksController::class, 'publish'])->name('tasks.publish');
 
         Route::resource('users', EmployeesController::class);

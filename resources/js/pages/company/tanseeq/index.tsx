@@ -5,8 +5,9 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { PaginatedData, Task } from '@/types/data';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
+import { show } from '@/routes/company/tanseeq';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,8 +28,6 @@ export default function Page({
             accessorKey: 'code',
             header: () => <div className={''}>{t('Code')}</div>,
             cell: ({ row }) => <div className=" ">{row.getValue('code')}</div>,
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'city',
@@ -36,15 +35,11 @@ export default function Page({
             cell: ({ row }) => (
                 <div className=" ">{row.original.city?.name ?? 'null'}</div>
             ),
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'customer',
             header: t('Customer'),
             cell: ({ row }) => <div>{row.original.customer.name}</div>,
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'status',
@@ -60,8 +55,6 @@ export default function Page({
                     </div>
                 );
             },
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'must_to_at',
@@ -77,15 +70,16 @@ export default function Page({
                     </div>
                 );
             },
-            enableSorting: false,
-            enableHiding: false,
+        },
+        {
+            accessorKey: 'do',
+            header: '',
+            cell: ({ row }) => <Link href={show(row.original.id).url} >{t('Do')}</Link>,
         },
         {
             accessorKey: 'address',
             header: t('address'),
             cell: ({ row }) => <div className="">{row.original.address}</div>,
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'viewer',
@@ -93,21 +87,18 @@ export default function Page({
             cell: ({ row }) => (
                 <div className=" ">{row.original.viewer?.name ?? 'null'}</div>
             ),
-            enableSorting: false,
-            enableHiding: false,
         },
     ];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full max-h-[92dvh] overflow-auto">
-
-                <div className="flex h-full flex-1  gap-4 overflow-auto  rounded-xl pt-2">
+                <div className="flex h-full flex-1 gap-4 overflow-auto rounded-xl pt-2">
                     <DataTable data={page_data.data} columns={cols} />
                 </div>
-                <div className="w-[300px] grid gap-4 py-2 pe-2 mt-2">
-                    <div className="bg-red-500  rounded-lg"></div>
-                    <div className="bg-blue-500 rounded-lg"></div>
+                <div className="mt-2 grid w-[300px] gap-4 py-2 pe-2">
+                    <div className="rounded-lg bg-red-500"></div>
+                    <div className="rounded-lg bg-blue-500"></div>
                 </div>
             </div>
         </AppLayout>

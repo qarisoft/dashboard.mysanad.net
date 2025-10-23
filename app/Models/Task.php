@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\EstatePricingEnums;
+use App\Enums\TaskLogs;
 use App\Enums\TaskStatusEnum;
 use App\Enums\TaskStatusEnum as Status;
 use App\Models\Geo\City;
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -31,22 +34,41 @@ class Task extends Model implements HasMedia
         'must_do_at' => 'datetime:Y-m-d H:i',
         'is_published' => 'boolean',
         'attach' => 'array',
+        'other_files' => 'array',
         'is_available' => 'boolean',
     ];
 
+    protected static function booted(): void
+    {
+
+        static::creating(function ($task) {
+            // Auto-increment company_task_id for the specific company
+            $task->task_number = self::where('company_id', $task->company_id)->max('task_number') + 1;
+        });
+
+        static::created(function ($task) {
+            $task->log(TaskLogs::created->value);
+            $task->location()->create([]);
+        });
+    }
+
+    public function logs(): MorphOne
+    {
+        return $this->morphOne(AppLogger::class, 'loggable');
+    }
+
+
+    public function log(string $msg): void
+    {
+        $this->logs()->create([
+            'title' => $msg,
+        ]);
+    }
+
     protected $guarded = [];
-
-//    protected static function booted(): void
-//    {
-//        static::creating(function ($task) {
-//            $task->location_id = Location::factory()->create()->id;
-//        });
-//    }
-
 
     public function registerMediaConversions(?Media $media = null): void
     {
-//        $this->location()->update()
         $this
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 300, 300)
@@ -89,28 +111,36 @@ class Task extends Model implements HasMedia
         return $this->hasMany(EstatePricing::class);
     }
 
-    public function publish(): void
+    public function publish(bool $is_published = true): void
     {
         $this->is_published = true;
         $this->published_at = now();
         $this->task_status_id = TaskStatusEnum::PUBLISHED->model()->id;
+        $this->log(TaskLogs::published->value);
         $this->save();
-        // $this->_updateStatus(
-        //     TaskStatus::query()
-        //         ->equalTo(TaskStatusEnum::PUBLISHED)
-        //         ->first()
-        // );
+    }
+    public function depublish(bool $is_published = true): void
+    {
+        $this->is_published = false;
+        $this->published_at = null;
+        $this->task_status_id = TaskStatusEnum::DEPUBLISHED->model()->id;
+        $this->log(TaskLogs::depublished->value);
+        $this->save();
     }
 
     public function acceptBy(Viewer $viewer): void
     {
+
         $this->viewer()->associate($viewer);
+
         $this->_updateStatus(
             TaskStatus::query()
                 ->equalTo(TaskStatusEnum::ACCEPTED_BY_VIEWER)
                 ->first()
         );
         $this->update(['is_available' => false]);
+
+        $this->log(TaskLogs::accepted->value . ' by ' . $viewer?->user?->name);
     }
 
     public function viewer(): BelongsTo
@@ -121,6 +151,11 @@ class Task extends Model implements HasMedia
     private function _updateStatus(?TaskStatus $status): void
     {
         if ($status) {
+            $this->logs()->create([
+                'title' => 'status changed from '
+                    . $this->status->name . ' into '
+                    . $status->name
+            ]);
             $this->status()->associate($status);
         }
     }
@@ -144,17 +179,15 @@ class Task extends Model implements HasMedia
             ->toArray();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->task_status_id = TaskStatus::query()->where('code', Status::UPLOADED)->get()->first()->id;
         $this->save();
+        $this->logs()->create([
+            'title' => 'Task has been closed',
+        ]);
     }
 
-    // public function users(): BelongsToMany
-    // {
-    //     return $this->belongsToMany(Employee::class,'task_viewers');
-
-    // }
 
     public function allowedViewers(): BelongsToMany
     {

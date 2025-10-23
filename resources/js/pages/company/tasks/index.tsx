@@ -5,7 +5,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { PaginatedData, Task } from '@/types/data';
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, Link, router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
 import TasksController from '@/actions/App/Http/Controllers/Company/TasksController';
@@ -22,12 +22,21 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { create, edit } from '@/routes/company/tasks';
+import { LoaderCircle } from 'lucide-react';
+import { FC } from 'react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
         href: dashboard().url,
     },
 ];
+
+const Center:FC<{value:string|undefined}> = ({value})=>{
+    return (
+        <div className={'text-center'} >{value}</div>
+    )
+}
 
 export default function Dashboard({
     page_data,
@@ -38,27 +47,21 @@ export default function Dashboard({
     const { t } = useLang();
     const cols: ColumnDef<Task>[] = [
         {
-            accessorKey: 'code',
-            header: () => <div className={''}>{t('Code')}</div>,
-            cell: ({ row }) => <div className=" ">{row.getValue('code')}</div>,
-            enableSorting: false,
-            enableHiding: false,
+            accessorKey: 'task_number',
+            header: () => <div className={''}>{t('#')}</div>,
+            cell: ({ row }) => <div className=" ">{row.getValue('task_number')}</div>,
         },
         {
             accessorKey: 'city',
             header: t('City'),
             cell: ({ row }) => (
-                <div className=" ">{row.original.city?.name ?? 'null'}</div>
+                <Center value={row.original.city?.name}/>
             ),
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'customer',
             header: t('Customer'),
-            cell: ({ row }) => <div>{row.original.customer.name}</div>,
-            enableSorting: false,
-            enableHiding: false,
+            cell: ({ row }) => <Center value={row.original.customer.name} />,
         },
         {
             accessorKey: 'status',
@@ -68,82 +71,21 @@ export default function Dashboard({
                 return (
                     <div
                         style={{ backgroundColor: row.original.status.color }}
-                        className=""
+                        className="text-center"
                     >
                         <span>{status.name}</span>
                     </div>
                 );
             },
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'is_published',
-            header: t('is_published'),
+            header: t('is published'),
             cell: ({ row }) => {
-                // const status = row.original.status;
-                // const publish = company.tasks.publish
-                // const publish = () => router.post(route('tasks.publish', row.original.id), { is_published: !row.original.is_published });
                 return (
-                    <Dialog>
-                        <DialogTrigger className={'bg-transparent'} asChild>
-                            <div className="text-center" dir={'ltr'}>
-                                <Switch
-                                    className={'cursor-pointer'}
-                                    checked={row.original.is_published}
-                                />
-                            </div>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
-                            <Form
-                                {...TasksController.publish.form(
-                                    row.original.id,
-                                )}
-                            >
-                                <Input
-                                    type={'checkbox'}
-                                    className={'hidden'}
-                                    name={'is_published'}
-                                    checked={!row.original.is_published}
-                                />
-
-                                <DialogHeader
-                                    className={
-                                        'flex items-center justify-center'
-                                    }
-                                >
-                                    <DialogTitle>
-                                        {t('Publish Task')}
-                                    </DialogTitle>
-                                    <DialogDescription>
-                                        {t(
-                                            'Are you sure you want to publish tasks for this task?',
-                                        )}
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="flex items-center space-x-2"></div>
-                                <DialogFooter className="sm:justify-start">
-                                    <Button type="button" variant="default">
-                                        {row.original.is_published
-                                            ? t('dePublish')
-                                            : t('Publish')}
-                                    </Button>
-                                    <DialogClose asChild>
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                        >
-                                            {t('Close')}
-                                        </Button>
-                                    </DialogClose>
-                                </DialogFooter>
-                            </Form>
-                        </DialogContent>
-                    </Dialog>
+                    <TaskPublishDialog task = {row.original} />
                 );
             },
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'must_to_at',
@@ -159,32 +101,114 @@ export default function Dashboard({
                     </div>
                 );
             },
-            enableSorting: false,
-            enableHiding: false,
         },
         {
             accessorKey: 'address',
             header: t('address'),
-            cell: ({ row }) => <div className="">{row.original.address}</div>,
-            enableSorting: false,
-            enableHiding: false,
+            cell: ({ row }) => <div className="text-center">{row.original.address}</div>,
         },
         {
             accessorKey: 'viewer',
             header: t('viewer'),
             cell: ({ row }) => (
-                <div className=" ">{row.original.viewer?.name ?? 'null'}</div>
+                <div className=" text-center">{row.original.viewer?.name ?? 'null'}</div>
             ),
-            enableSorting: false,
-            enableHiding: false,
+        },
+        {
+            accessorKey: 'edit',
+            header: '',
+            cell: ({ row }) => (
+                <div className={'flex  pe-1 justify-end '}>
+
+                <Link href={edit(row.original.id).url} className={'text-xs'} >{t('Edit')}</Link>
+                </div>
+            ),
         },
     ];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl pt-2 max-h-[92dvh] overflow-auto">
-                <DataTable data={page_data.data} columns={cols} />
+            <div className="flex h-full max-h-[92dvh] flex-1 flex-col gap-4 overflow-auto overflow-x-auto rounded-xl pt-2">
+                <DataTable data={page_data.data} columns={cols} onCreate={()=>router.get(create())} />
             </div>
         </AppLayout>
     );
+}
+
+
+
+
+const  TaskPublishDialog:FC<{task:Task}> = ({task})=>{
+    const {t}=useLang()
+    return (
+        <Dialog>
+            <DialogTrigger className={'bg-transparent'} asChild>
+                <div className="text-center" dir={'ltr'}>
+                    <Switch
+                        className={'cursor-pointer'}
+                        checked={task.is_published}
+                    />
+                </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+                <Form
+                    {...TasksController.publish.form(
+                        task.id,
+                    )}
+                >
+                    {({processing})=>(
+                        <>
+                            <Input
+                                type={'checkbox'}
+                                className={'hidden'}
+                                name={'is_published'}
+                                checked={!task.is_published}
+                            />
+
+                            <DialogHeader
+                                className={
+                                    'flex items-center justify-center'
+                                }
+                            >
+                                <DialogTitle>
+                                    {t('Publish Task')}
+                                </DialogTitle>
+                                <DialogDescription>
+                                    {t(
+                                        'Are you sure you want to publish tasks for this task?',
+                                    )}
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="flex items-center space-x-2"></div>
+                            <DialogFooter className="sm:justify-start">
+                                <Button
+                                    disabled={processing}
+                                    type="submit" variant="default">
+                                    {task.is_published
+                                        ? t('dePublish')
+                                        : t('Publish')}
+                                    {processing && (
+                                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                                    )}
+                                </Button>
+                                <DialogClose
+                                    disabled={processing}
+                                    asChild>
+                                    <Button
+                                        disabled={processing}
+                                        type="button"
+                                        variant="secondary"
+                                    >
+                                        {t('Close')}
+                                    </Button>
+                                </DialogClose>
+                            </DialogFooter>
+
+                        </>
+                    )}
+                </Form>
+            </DialogContent>
+            </Dialog>
+
+    )
 }
